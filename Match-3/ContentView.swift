@@ -8,14 +8,45 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var showingAlert = false
+    
     var body: some View {
         VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+            gameTitle
+            Divider()
+            Spacer()
+            Text("Game area")
+            Spacer()
+            Divider()
+            score
+                .padding(5)
+            Button("Restart game"){
+                showingAlert = true
+            }
+            .alert("Are you sure you want to restart game?", isPresented: $showingAlert) {
+                Button("Restart", role: .cancel){}
+                Button("Cancel", role: .destructive){}
+            }
         }
         .padding()
+    }
+    
+    var gameTitle: some View {
+        HStack{
+            Text("Match")
+            Image(systemName: "3.square.fill")
+                .imageScale(.large)
+                
+        }
+        .foregroundStyle(
+            LinearGradient(colors: [.red, .indigo], startPoint: .top, endPoint: .bottom)
+        )
+        .font(.system(size: 32, weight: .heavy))
+    }
+    
+    var score: some View {
+        Text("Score: 0")
+            .font(.system(size: 22, weight: .heavy))
     }
 }
 
