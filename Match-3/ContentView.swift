@@ -10,12 +10,32 @@ import SwiftUI
 struct ContentView: View {
     @State private var showingAlert = false
     
+    @ObservedObject var viewModel: MatchGameViewModel
+    
+    let columns = [GridItem(.flexible()),
+                   GridItem(.flexible()),
+                   GridItem(.flexible()),
+                   GridItem(.flexible()),
+                   GridItem(.flexible()),
+                   GridItem(.flexible()),
+                   GridItem(.flexible()),
+                   GridItem(.flexible())]
+    
     var body: some View {
         VStack {
             gameTitle
             Divider()
             Spacer()
-            Text("Game area")
+            //Game area
+            LazyVGrid(columns: columns, spacing: 5) {
+                ForEach(viewModel.getGems) { gem in
+                    GemView(gem: gem)
+                        .aspectRatio(1, contentMode: .fit) 
+                }
+            }
+            .animation(.default, value: viewModel.getGems)
+            
+            // ---
             Spacer()
             Divider()
             score
@@ -24,7 +44,10 @@ struct ContentView: View {
                 showingAlert = true
             }
             .alert("Are you sure you want to restart game?", isPresented: $showingAlert) {
-                Button("Restart", role: .cancel){}
+                Button("Restart", role: .cancel){
+                    viewModel.restart()
+                    viewModel.shuffle()
+                }
                 Button("Cancel", role: .destructive){}
             }
         }
@@ -51,5 +74,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+    ContentView(viewModel: MatchGameViewModel())
 }
