@@ -10,6 +10,7 @@ import SwiftUI
 
 struct Gem: Identifiable, Equatable {
     var id: Int
+    var marked: Bool = false
     
     var color: Color
 }

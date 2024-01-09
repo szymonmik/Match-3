@@ -23,6 +23,10 @@ class MatchGameViewModel: ObservableObject {
         return model.gems
     }
     
+    func chooseGem(gem: Gem, doUpdate: Bool){
+        model.chooseGem(gem, doUpdate: doUpdate)
+    }
+    
     func shuffle(){
         model.shuffle()
     }

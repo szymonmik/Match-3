@@ -19,6 +19,43 @@ struct MatchGameModel {
         }
     }
     
+    mutating func chooseGem(_ gem: Gem, doUpdate: Bool = false){
+        if let chosenGemIndex = gems.firstIndex(where: {$0.id == gem.id}){
+            gems[chosenGemIndex].marked = true
+            
+            if (chosenGemIndex-1 >= 0 
+                && chosenGemIndex % 8 != 0
+                && gems[chosenGemIndex-1].color == gem.color
+                && !gems[chosenGemIndex-1].marked){
+                chooseGem(gems[chosenGemIndex-1])
+            }
+            if (chosenGemIndex+1 < gems.count
+                && chosenGemIndex % 8 != 7
+                && gems[chosenGemIndex+1].color == gem.color
+                && !gems[chosenGemIndex+1].marked){
+                chooseGem(gems[chosenGemIndex+1])
+            }
+            if (chosenGemIndex-8 >= 0 
+                && gems[chosenGemIndex-8].color == gem.color
+                && !gems[chosenGemIndex-8].marked){
+                chooseGem(gems[chosenGemIndex-8])
+            }
+            if (chosenGemIndex+8 < gems.count 
+                && gems[chosenGemIndex+8].color == gem.color
+                && !gems[chosenGemIndex+8].marked){
+                chooseGem(gems[chosenGemIndex+8])
+            }
+        }
+        
+        if (doUpdate) {
+            for i in 0..<gems.count {
+                if (gems[i].marked) {
+                    gems[i].color = Color.white
+                }
+            }
+        }
+    }
+    
     mutating func shuffle(){
             gems.shuffle()
     }

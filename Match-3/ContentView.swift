@@ -30,10 +30,13 @@ struct ContentView: View {
             LazyVGrid(columns: columns, spacing: 5) {
                 ForEach(viewModel.getGems) { gem in
                     GemView(gem: gem)
-                        .aspectRatio(1, contentMode: .fit) 
-                }
+                        .aspectRatio(1, contentMode: .fit)
+                        .onTapGesture {
+                            viewModel.chooseGem(gem: gem, doUpdate: true)
+                        }
+                }.animation(.default, value: viewModel.getGems)
             }
-            .animation(.default, value: viewModel.getGems)
+            
             
             // ---
             Spacer()
