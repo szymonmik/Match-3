@@ -36,34 +36,16 @@ struct MatchGameModel {
         }
         if let chosenGemIndex = gems.firstIndex(where: {$0.id == gem.id}){
             gems[chosenGemIndex].marked = true
+            checkAdjacentGems(gem: gem, chosenGemIndex: chosenGemIndex)
             
-            if (chosenGemIndex-1 >= 0 
-                && chosenGemIndex % 8 != 0
-                && gems[chosenGemIndex-1].color == gem.color
-                && !gems[chosenGemIndex-1].marked){
-                chooseGem(gems[chosenGemIndex-1])
-            }
-            if (chosenGemIndex+1 < gems.count
-                && chosenGemIndex % 8 != 7
-                && gems[chosenGemIndex+1].color == gem.color
-                && !gems[chosenGemIndex+1].marked){
-                chooseGem(gems[chosenGemIndex+1])
-            }
-            if (chosenGemIndex-8 >= 0 
-                && gems[chosenGemIndex-8].color == gem.color
-                && !gems[chosenGemIndex-8].marked){
-                chooseGem(gems[chosenGemIndex-8])
-            }
-            if (chosenGemIndex+8 < gems.count 
-                && gems[chosenGemIndex+8].color == gem.color
-                && !gems[chosenGemIndex+8].marked){
-                chooseGem(gems[chosenGemIndex+8])
-            }
         }
         
         if (doUpdate) {
             updateGems()
             points += gemsPoped*gemsPoped
+            if(gemsPoped >= 5){
+                movesLeft += 1
+            }
         }
     }
     func findAvailableGemIndex(emptyGemId: Int) -> Int{
@@ -93,8 +75,29 @@ struct MatchGameModel {
             }
         }
     }
-    func checkAdjacentGems(){
-        
+    mutating func checkAdjacentGems(gem: Gem, chosenGemIndex: Int){
+        if (chosenGemIndex-1 >= 0
+            && chosenGemIndex % 8 != 0
+            && gems[chosenGemIndex-1].color == gem.color
+            && !gems[chosenGemIndex-1].marked){
+            chooseGem(gems[chosenGemIndex-1])
+        }
+        if (chosenGemIndex+1 < gems.count
+            && chosenGemIndex % 8 != 7
+            && gems[chosenGemIndex+1].color == gem.color
+            && !gems[chosenGemIndex+1].marked){
+            chooseGem(gems[chosenGemIndex+1])
+        }
+        if (chosenGemIndex-8 >= 0
+            && gems[chosenGemIndex-8].color == gem.color
+            && !gems[chosenGemIndex-8].marked){
+            chooseGem(gems[chosenGemIndex-8])
+        }
+        if (chosenGemIndex+8 < gems.count
+            && gems[chosenGemIndex+8].color == gem.color
+            && !gems[chosenGemIndex+8].marked){
+            chooseGem(gems[chosenGemIndex+8])
+        }
     }
     mutating func shuffle(){
             gems.shuffle()

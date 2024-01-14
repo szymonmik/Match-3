@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 class MatchGameViewModel: ObservableObject {
-    private static let colors: [Color] = [.blue, .red, .green, .yellow, .purple, .orange]
+    private static let colors: [Color] = [.blue, .red, .green, .yellow, .purple]
     private (set) var highScore=0
     @Published private var model: MatchGameModel = createMatchGameModel()
     
