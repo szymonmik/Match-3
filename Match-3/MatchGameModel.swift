@@ -10,6 +10,9 @@ import SwiftUI
 
 struct MatchGameModel {
     private(set) var gems: Array<Gem>
+    private(set) var points: Int = 0
+    private(set) var movesLeft: Int = 10
+    var gemsPoped: Int = 0
     
     init(numberOfGems: Int, numberOfColors: Int, gemFactory: (Int) -> Color) {
         gems = []
@@ -20,6 +23,17 @@ struct MatchGameModel {
     }
     
     mutating func chooseGem(_ gem: Gem, doUpdate: Bool = false){
+        
+        if(doUpdate){
+            if(movesLeft <= 0){
+                return
+            }
+            gemsPoped = 1
+            movesLeft -= 1
+        }
+        else{
+            gemsPoped += 1
+        }
         if let chosenGemIndex = gems.firstIndex(where: {$0.id == gem.id}){
             gems[chosenGemIndex].marked = true
             
@@ -48,14 +62,40 @@ struct MatchGameModel {
         }
         
         if (doUpdate) {
-            for i in 0..<gems.count {
-                if (gems[i].marked) {
-                    gems[i].color = Color.white
+            updateGems()
+            points += gemsPoped*gemsPoped
+        }
+    }
+    func findAvailableGemIndex(emptyGemId: Int) -> Int{
+        var j = 8
+        var indexToReturn = -1
+        while(emptyGemId - j - 8 >= 0 && gems[emptyGemId - j].marked){
+            j += 8
+        }
+        indexToReturn = emptyGemId - j
+        print(indexToReturn)
+        return indexToReturn
+    }
+    mutating func updateGems(){
+        for i in 0..<gems.count {
+            if (gems[i].marked) {
+                gems[i].color = Color.white
+            }
+
+        }
+        for i in 0..<gems.count {
+            if(gems[gems.count - i - 1].marked && gems.count - i - 9 >= 0)
+            {
+                let indexToSwap = findAvailableGemIndex(emptyGemId: gems.count - i - 1)
+                if(indexToSwap != -1){
+                    gems.swapAt(gems.count - i - 1, indexToSwap)
                 }
             }
         }
     }
-    
+    func checkAdjacentGems(){
+        
+    }
     mutating func shuffle(){
             gems.shuffle()
     }

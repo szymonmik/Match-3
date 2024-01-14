@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var showingAlert = false
-    
+    @State private var gameEndAlert = false
     @ObservedObject var viewModel: MatchGameViewModel
     
     let columns = [GridItem(.flexible()),
@@ -24,8 +24,11 @@ struct ContentView: View {
     var body: some View {
         VStack {
             gameTitle
-            Divider()
+            score
+                .padding(5)
+            highScore
             Spacer()
+            Divider()
             //Game area
             LazyVGrid(columns: columns, spacing: 5) {
                 ForEach(viewModel.getGems) { gem in
@@ -33,16 +36,19 @@ struct ContentView: View {
                         .aspectRatio(1, contentMode: .fit)
                         .onTapGesture {
                             viewModel.chooseGem(gem: gem, doUpdate: true)
+                            if(viewModel.getMovesLeft <= 0){
+                                gameEndAlert = true
+                            }
                         }
                 }.animation(.default, value: viewModel.getGems)
             }
             
-            
-            // ---
             Spacer()
             Divider()
-            score
-                .padding(5)
+            // ---
+            movesLeft
+            Spacer()
+            Divider()
             Button("Restart game"){
                 showingAlert = true
             }
@@ -52,6 +58,12 @@ struct ContentView: View {
                     viewModel.shuffle()
                 }
                 Button("Cancel", role: .destructive){}
+            }.alert("Game over!\n Do you want to play again?", isPresented: $gameEndAlert) {
+                Button("Yes", role: .cancel){
+                    viewModel.restart()
+                    viewModel.shuffle()
+                }
+                Button("No", role: .destructive){}
             }
         }
         .padding()
@@ -59,21 +71,30 @@ struct ContentView: View {
     
     var gameTitle: some View {
         HStack{
-            Text("Match")
-            Image(systemName: "3.square.fill")
+            Text("Color Matcher")
+            Image(systemName: "paintpalette.fill")
                 .imageScale(.large)
                 
         }
         .foregroundStyle(
             LinearGradient(colors: [.red, .indigo], startPoint: .top, endPoint: .bottom)
         )
-        .font(.system(size: 32, weight: .heavy))
+        .font(.system(size: 36, weight: .heavy))
     }
     
     var score: some View {
-        Text("Score: 0")
-            .font(.system(size: 22, weight: .heavy))
+        Text("Score: \(viewModel.getPoints)")
+            .font(.system(size: 32, weight: .heavy))
     }
+    var highScore: some View{
+        Text("High score: \(viewModel.highScore)")
+            .font(.system(size: 20, weight: .heavy)).foregroundColor(Color.gray)
+    }
+    var movesLeft: some View {
+        Text("Moves left: \(viewModel.getMovesLeft)")
+            .font(.system(size: 28, weight: .heavy))
+    }
+
 }
 
 #Preview {
